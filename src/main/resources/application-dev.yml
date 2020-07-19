@@ -1,0 +1,21 @@
+# 开发环境配置
+server:
+  port: 7777
+
+# thymeleaf start
+spring:
+  thymeleaf:
+    mode: HTML
+    encoding: UTF-8
+    servlet:
+      content-type: text/html
+    cache: false
+# thymeleaf end
+  messages:
+    basename: i18n.login
+
+  datasource:
+    driver-class-name: com.mysql.jdbc.Driver
+    url: jdbc:mysql://120.26.88.216:3306/vote?useUnicode=true&characterEncoding=utf8&serverTimezone=GMT%2B8
+    username: root
+    password: 123456

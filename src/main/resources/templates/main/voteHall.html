@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en" th:replace="main/index :: #public_head">
+    <script src="/js/cookie.js"></script>
+</head>
+<body>
+<!--头部-->
+<header class="publicHeader" th:replace="main/index :: #public_header">
+</header>
+
+</section>
+<!--主体内容-->
+<section class="publicMian ">
+    <div class="right">
+        <!--        <form id="searchForm" th:action="@{/showAllVotes}" th:method="get">-->
+        <!--            <div class="search">-->
+        <!--                <span>商品名称：</span>-->
+        <!--                <input type="text" th:value="${voteTitle}" name="voteName" placeholder="请输入投票的标题"/>-->
+        <!--                <input type="button" onclick="$('#searchForm').submit();" value="查询"/>-->
+        <!--            </div>-->
+        <!--        </form>-->
+        <!--投票事件展示-->
+        <table class="providerTable" cellpadding="0" cellspacing="0">
+            <tr class="firstTr">
+                <th width="20%">投票标题</th>
+                <th width="20%">投票描述</th>
+                <th width="10%">已投票人数</th>
+                <th width="5%">投票类型</th>
+                <th width="15%">截止日期</th>
+                <th width="10%">创建人</th>
+                <th width="20%">操作</th>
+            </tr>
+            <tr th:each="voteInfo : ${voteList}">
+                <td th:text="${voteInfo.voteTitle}"></td>
+                <td th:text="${voteInfo.voteDescription}"></td>
+                <td th:text="${voteInfo.voteNum}"></td>
+                <td th:text="${voteInfo.voteType} == 1 ? '单项' : '多项'"></td>
+                <td th:text="${voteInfo.deadline}"></td>
+                <td th:text="${voteInfo.userName}"></td>
+                <td>
+                    <a th:href="@{/getVoteInfo/} + ${voteInfo.voteUuid}" th:method="get" href="detail.html" style="color:blue">查看详情</a>
+                    <a href = "#" style="color:blue" th:onclick="joinVote([[${voteInfo.voteUuid}]])">参与</a>
+<!--                    <a th:href="@{/joinVote/} + ${voteInfo.voteUuid}" th:method="get" href="join.html" style="color:blue" onclick="joinVote()">参与</a>-->
+                </td>
+            </tr>
+
+        </table>
+
+    </div>
+</section>
+
+
+<script src="/js/jquery.js"></script>
+</body>
+</html>
+
+<script type="text/javascript">
+
+    function joinVote(voteUuid) {
+        // const voteUuid = $(this).attr("value");
+        // const voteUuid = $("#voteUuid").val();
+        $.ajax(
+            {
+                url : "/joinVote",
+                type : "GET",
+                data : {"voteUuid": voteUuid},
+                dataType: "json",
+                contentType:"application/json",
+                success: function (data) {
+                    if (data.errCode === 1 ) {
+                        window.location.href='/toJoin/' + voteUuid
+                    }
+                    else {
+                        alert("已参与！")
+                    }
+                },
+                error:function() {
+                    alert("错误！")
+                }
+            }
+        )
+    }
+</script>

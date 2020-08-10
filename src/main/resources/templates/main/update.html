@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en" th:replace="main/index :: #public_head">
+</head>
+<body>
+<!--头部-->
+<header class="publicHeader" th:replace="main/index :: #public_header">
+</header>
+</section>
+<!--主体内容-->
+<section class="publicMian ">
+    <div class="right">
+        <div class="providerAdd">
+            <!--            <form id="addForm" th:action="@{/createSingleVote}" th:method="get" action="../main/index.html">-->
+            <form id="addForm">
+
+                <div class="">
+                    <label for="voteUuid">投票ID：</label>
+                    <input type="text" name="voteUuid" id="voteUuid" th:value="${voteEventInfo.voteUuid}" disabled="disabled"/>
+                </div>
+
+                <div class="">
+                    <label for="voteTitle">投票标题：</label>
+                    <input type="text" name="voteTitle" id="voteTitle" th:value="${voteEventInfo.voteTitle}"/>
+                </div>
+                <div>
+                    <label for="voteDescription">投票描述：</label>
+                    <input type="text" name="voteDescription" id="voteDescription" th:value="${voteEventInfo.voteDescription}"/>
+                </div>
+
+                <div id="op">
+                    <tr th:each="options : ${voteEventInfo.optionsInfoList}">
+                        <label>选项：</label>
+                        <td><input type="text" class="options" th:value="${options.optionsDescription}"/></td>
+                        <span>*请输入选项</span>
+                        </br>
+                    </tr>
+                </div>
+
+                <div class="providerAddBtn">
+                    <input type="button" value="完成" id="sendTo" name="sendTo"/>
+                    <input type="button" value="返回" onclick="history.back(-1)"/>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
+<footer class="footer"><div style="text-align:center;"></div></footer>
+<script src="/js/jquery.js"></script>
+</body>
+</html>
+<script type="text/javascript">
+    // 发送数据到controller层
+    $("#sendTo").click(function () {
+
+        const attr = [];
+        $(".options").each(function () {
+            attr.push($(this).val())
+        });
+
+        const VoteOptionsInfo = {
+            voteUuid: $("#voteUuid").val(),
+            voteTitle: $("#voteTitle").val(),
+            voteDescription: $("#voteDescription").val(),
+            optionsDescription: attr
+        };
+
+        $.ajax({
+            url: "/updateVote",
+            type: "PUT",
+            // data: {"voteTitle":voteTitle, "voteDescription":voteDescription, "options":options, "deadline":deadline, "isAnonymous":isAnonymous}
+            data: JSON.stringify(VoteOptionsInfo),
+            dataType: "json",
+            contentType:"application/json",
+            success: function (data) {
+                console.log(data);
+                if (data.errCode === 1 ) {
+                    window.location.href='/index.html'
+                }
+                else {
+                    alert(data.msg)
+                }
+            },
+            error:function() {
+                alert("修改失败！")
+            }
+        })
+
+    })
+
+</script>

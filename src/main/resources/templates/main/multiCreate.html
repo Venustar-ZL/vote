@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en" th:replace="main/index :: #public_head">
+</head>
+<body>
+<!--头部-->
+<header class="publicHeader" th:replace="main/index :: #public_header">
+</header>
+</section>
+<!--主体内容-->
+<section class="publicMian ">
+    <div class="right">
+        <div class="providerAdd">
+            <!--            <form id="addForm" th:action="@{/createSingleVote}" th:method="get" action="../main/index.html">-->
+            <form id="addForm">
+                <div class="">
+                    <label for="voteTitle">投票标题：</label>
+                    <input type="text" name="voteTitle" id="voteTitle"/>
+                    <span >*请输入投票标题</span>
+                </div>
+                <div>
+                    <label for="voteDescription">投票描述：</label>
+                    <input type="text" name="voteDescription" id="voteDescription"/>
+                    <span >*请输入投票描述（选填）</span>
+                </div>
+
+                <div id="op">
+                    <label for="options1">选项1：</label>
+                    <input type="text" class="options" id="options1"/>
+                    <span>*请输入选项1</span>
+                    <br>
+                    <br>
+                    <label for="options2">选项2：</label>
+                    <input type="text" class="options" id="options2"/>
+                    <span>*请输入选项2</span>
+                </div>
+
+                <div id="org">
+                    <label for="options2">添加选项：</label>
+                    <input type="button" onclick="add()" value="添加选项"/>
+                </div>
+                <!--                <div>-->
+                <!--                    <label for="deadline">截止日期：</label>-->
+                <!--                    <input type="text" name="deadline" id="deadline"/>-->
+                <!--                </div>-->
+
+                <div>
+                    <label for="deadline">截止日期：</label>
+                    <input class="Wdate" type="datetime-local" name="deadline" id="deadline" onclick="WdatePicker({ dateFmt: 'yyyy-MM-dd HH:mm:ss' })">
+                </div>
+
+                <div>
+                    <label for="isAnonymous">匿名创建：</label>
+                    <input type="radio" name="isAnonymous" id="isAnonymous" th:value="false"/>
+                </div>
+
+                <div class="providerAddBtn">
+                    <input type="button" value="完成" id="sendTo" name="sendTo"/>
+                    <input type="button" value="返回" onclick="history.back(-1)"/>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
+<footer class="footer"><div style="text-align:center;"></div></footer>
+<script src="/js/jquery.js"></script>
+<!--
+	<script src="js/time.js"></script>
+	-->
+</body>
+</html>
+
+<script type="text/javascript">
+
+    // const attr = [];
+    // $(".options").each(function () {
+    //     attr.push($(this).val())
+    // });
+    // console.log(attr)
+
+    // const txt = $('#op').find(':text'); // 获取所有文本框
+    // for (let i = 0; i < txt.length; i++) {
+    //     attr.push(txt.eq(i).val()); // 将文本框的值添加到数组中
+    // }
+
+
+    window.onload = function () {
+        var isIE = !!window.ActiveXObject;
+        var isIE6 = isIE && !window.XMLHttpRequest;
+        if (ifIF6) {2
+            var Lis = document.getElementsByTagName("li");
+            for (var i = 0; i < Lis.length; i++) {
+                Lis[i].onmouseover = function () {
+                    var u = this.getElementsByTagName("ul")[0];
+                    if (u != undefined) {
+                        u.style.display = "block";
+                    }
+                }
+
+                Lis[i].onmouseover = function () {
+                    var u = this.getElementsByTagName("ul")[0];
+                    if (u = undefined) {
+                        u.style.display = "none";
+                    }
+                }
+            }
+        }
+    }
+
+    //用Jquery实现兼容,首先引入包<script typr="" url="">
+    $(function () {
+        //更高版本的Jquery使用$.support.leadingWhitespace来判断IE浏览器是多少
+        if ($.browser.mise && $.browser.version.substr(0, 1) < 7) {
+            $("li").has("ul").mouseover(function () {
+                $(this).children("ul").css("display", "block");
+            }).mouseout(function () {
+                $(this).children("ul").css("display", "none");
+            })
+        }
+
+    })
+
+    let optionId = 3;
+
+    // 默认不匿名
+    // 0 : 不匿名
+    // 1 ：匿名
+    let checkFlag = 0;
+
+    function add(){
+        let str = "";
+        str +=  '<div><label for = "options"' + optionId + '>选项' + optionId + '：</label> ' +
+            '<input type = text class = options id = options' + optionId + '/>' +
+            '<span>   *请输入选项' + optionId + '</span></div>';
+        optionId++;
+        $("#op").append(str);
+
+    }
+
+    // 匿名单选框的修改
+    $('input:radio').click(function(){
+        var $radio = $(this);
+        // if this was previously checked
+        if ($radio.data('waschecked') === true){
+            checkFlag = 0;
+            $radio.prop('checked', false);
+            $radio.data('waschecked', false);
+        } else {
+            checkFlag = 1;
+            $radio.prop('checked', true);
+            $radio.data('waschecked', true);
+        }
+    });
+
+    // 发送数据到controller层
+    $("#sendTo").click(function () {
+
+        const attr = [];
+        $(".options").each(function () {
+            attr.push($(this).val())
+        });
+
+        const option = {
+            voteTitle: $("#voteTitle").val(),
+            voteDescription: $("#voteDescription").val(),
+            options: attr,
+            deadline: $("#deadline").val(),
+            isAnonymous: checkFlag
+        };
+
+        $.ajax({
+            url: "/createMultiVote",
+            type: "POST",
+            // data: {"voteTitle":voteTitle, "voteDescription":voteDescription, "options":options, "deadline":deadline, "isAnonymous":isAnonymous}
+            data: JSON.stringify(option),
+            dataType: "json",
+            contentType:"application/json",
+            success: function (data) {
+                console.log(data);
+                if (data.errCode === 1 ) {
+                    window.location.href='index.html'
+                }
+                else {
+                    alert(data.msg)
+                }
+            },
+            error:function() {
+                alert("创建失败！")
+            }
+        })
+
+    })
+
+</script>

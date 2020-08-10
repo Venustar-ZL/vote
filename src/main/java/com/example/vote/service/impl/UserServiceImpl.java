@@ -51,17 +51,17 @@ public class UserServiceImpl implements UserService {
             }
         }
         if (userNameFlag) {
-            return CommonResult.buildWithData(false, 0, "用户名不存在", null);
-        }
+            // 判断密码是否正确
+            UserInfo userInfo = userDao.getUserInfo(userName);
+            String userUuid = userInfo.getUserUuid();
+            String oldPassword = userInfo.getPassword();
+            boolean passwordFlag =  PasswordUtil.matches(password, oldPassword);
+            if (!passwordFlag) {
+                return CommonResult.buildWithData(false, 0, "密码错误", null);
+            }
 
-        // 判断密码是否正确
-        UserInfo userInfo = userDao.getUserInfo(userName);
-        String oldPassword = userInfo.getPassword();
-        boolean passwordFlag =  PasswordUtil.matches(password, oldPassword);
-        if (!passwordFlag) {
-            return CommonResult.buildWithData(false, 0, "密码错误", null);
+            return CommonResult.buildWithData(true, 1, "登录成功", userUuid);
         }
-
-        return CommonResult.buildWithData(true, 1, "登录成功", null);
+        return CommonResult.buildWithData(false, 0, "用户名不存在", null);
     }
 }

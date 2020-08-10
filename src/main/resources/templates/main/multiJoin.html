@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en" th:replace="main/index :: #public_head">
+</head>
+<body>
+<!--头部-->
+<header class="publicHeader" th:replace="main/index :: #public_header">
+</header>
+</section>
+<!--主体内容-->
+<section class="publicMian ">
+    <div class="right">
+        <div class="providerAdd">
+            <form id="addForm">
+
+                <div class="">
+                    <label for="voteUuid">投票ID：</label>
+                    <input type="text" name="voteUuid" id="voteUuid" th:value="${voteEventInfo.voteUuid}" disabled="disabled"/>
+                </div>
+
+                <div class="">
+                    <label for="voteTitle">投票标题：</label>
+                    <input type="text" name="voteTitle" id="voteTitle" th:value="${voteEventInfo.voteTitle}" disabled="disabled"/>
+                </div>
+                <div>
+                    <label for="voteDescription">投票描述：</label>
+                    <input type="text" name="voteDescription" id="voteDescription" th:value="${voteEventInfo.voteDescription}" disabled="disabled"/>
+                </div>
+
+                <div>
+                    <label>选项：</label>
+                    <!--                    <input name="option" type="radio"/>[[${voteEventInfo.voteDescription}]]</label>-->
+                    <tr th:each="options : ${voteEventInfo.optionsInfoList}">
+                        <td><input name="option" type="checkbox" class="op" th:value="${options.optionsUuid}"/>[[${options.optionsDescription}]]
+                        </td>
+                    </tr>
+                </div>
+
+                <!--                <div>-->
+                <!--                    <label for="isAnonymous">匿名投票：</label>-->
+                <!--                    <input type="radio" name="isAnonymous" id="isAnonymous" th:value="false"/>-->
+                <!--                </div>-->
+
+                <div class="providerAddBtn">
+                    <input type="button" value="完成" id="sendTo" name="sendTo"/>
+                    <input type="button" value="返回" onclick="history.back(-1)"/>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</section>
+<footer class="footer"><div style="text-align:center;"></div></footer>
+<script src="/js/jquery.js"></script>
+</body>
+</html>
+
+<script type="text/javascript">
+
+    $("#sendTo").click(function () {
+
+        const obj = document.getElementsByName("option");
+        var check_val = [];
+        for(var k in obj){
+            if(obj[k].checked)
+                check_val.push(obj[k].value);
+        }
+
+        const optionsUuid = check_val;
+
+        const VoteMultiOptions = {
+            voteUuid: $("#voteUuid").val(),
+            optionsUuid: optionsUuid
+            // isAnonymous: checkFlag
+        };
+
+        $.ajax({
+            url: "/addMultiVote",
+            type: "POST",
+            data: JSON.stringify(VoteMultiOptions),
+            dataType: "json",
+            contentType:"application/json",
+            success: function (data) {
+                if (data.errCode === 1 ) {
+                    window.location.href='/index.html'
+                }
+                else {
+                    alert("投票失败！")
+                }
+            },
+            error:function() {
+                alert("投票失败！")
+            }
+        })
+
+    })
+</script>

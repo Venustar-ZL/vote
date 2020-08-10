@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head lang="en" id="public_head">
+    <meta charset="UTF-8">
+    <title>投票系统</title>
+<!--    <script src="/js/echarts.min.js"></script>-->
+    <script src="https://cdn.staticfile.org/echarts/4.3.0/echarts.min.js"></script>
+    <link rel="stylesheet" th:href="@{/css/public.css}" href="../css/public.css"/>
+    <link rel="stylesheet" th:href="@{/css/style.css}" href="../css/style.css"/>
+</head>
+<body>
+<header class="publicHeader" id="public_header">
+    <section>
+        <h1>投票系统</h1>
+        <div class="publicHeaderR">
+            <p><span style="color: #fff21b"><a th:href="@{/toMine}" href="index.html">我的</a></span></p>
+        </div>
+    </section>
+</header>
+
+<section>
+    <div class="subBtn">
+        <a th:href="@{/toSingleCreate}">
+            <button>单项投票</button>
+        </a>
+        <a th:href="@{/toMultiCreate}">
+            <button>多项投票</button>
+        </a>
+        <a th:href="@{toVoteHall}">
+            <button>投票大厅</button>
+        </a>
+    </div>
+</section>
+
+</body>
+</html>

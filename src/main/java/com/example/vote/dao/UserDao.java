@@ -23,9 +23,8 @@ public interface UserDao {
      * @param password
      * @param userUuid
      */
-    @Insert("insert into user_info (user_name, password, user_uuid) values (#{userName}, #{password}, #{userUuid})")
-    @Results( id = "user", value =
-            {
+    @Insert({"insert into user_info (user_name, password, user_uuid) values (#{userName}, #{password}, #{userUuid})"})
+    @Results(id="user1", value= {
                     @Result(column = "user_name", property = "userName"),
                     @Result(column = "password", property = "password"),
                     @Result(column = "user_uuid", property = "userUuid")
@@ -38,16 +37,35 @@ public interface UserDao {
      * @param userName
      * @return
      */
-    @Select("select user_uuid, user_name, password from user_info where user_name = #{userName}")
-    @ResultMap(value = "user")
+    @Select({"select user_uuid, user_name, password from user_info where user_name = #{userName}"})
+    @Results(id="user2", value= {
+            @Result(column = "user_name", property = "userName"),
+            @Result(column = "password", property = "password"),
+            @Result(column = "user_uuid", property = "userUuid")
+    }
+    )
     public UserInfo getUserInfo(@Param("userName") String userName);
 
     /**
      * 获取所有的用户信息
      * @return
      */
-    @Select("select user_uuid, user_name, password from user_info")
-    @ResultMap(value = "user")
+    @Select({"select user_uuid, user_name, password from user_info"})
+    @Results(id="user3", value= {
+            @Result(column = "user_name", property = "userName"),
+            @Result(column = "password", property = "password"),
+            @Result(column = "user_uuid", property = "userUuid")
+    }
+    )
     public List<UserInfo> getAllUserInfo();
+
+    @Select({"select user_name from user_info where user_uuid = #{userUuid}"})
+    @Results(id="user4", value= {
+            @Result(column = "user_name", property = "userName"),
+            @Result(column = "password", property = "password"),
+            @Result(column = "user_uuid", property = "userUuid")
+    }
+    )
+    public String getUserName(@Param("userUuid") String userUuid);
 
 }
